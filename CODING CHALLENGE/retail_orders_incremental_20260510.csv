@@ -1,0 +1,6 @@
+ORDER_ID,CUSTOMER_ID,CUSTOMER_NAME,PRODUCT_ID,PRODUCT_NAME,CATEGORY,QUANTITY,UNIT_PRICE,TOTAL_AMOUNT,ORDER_DATE,STATUS,REGION
+1026,C025,Yara Brown,P112,Headset Pro,Electronics,1,149.99,149.99,2026-05-10,Delivered,West
+1027,C026,Zane Carter,P113,Desk Lamp LED,Electronics,2,34.99,69.98,2026-05-10,Shipped,North
+1028,C027,Amy Walker,P117,Monitor 27 inch,Electronics,1,299.99,299.99,2026-05-10,Delivered,South
+1029,C028,Brian Hall,P106,Notebook Pack,Stationery,10,4.99,49.90,2026-05-10,Delivered,East
+1030,C029,Chloe Adams,P109,Laptop Stand,Electronics,1,39.99,39.99,2026-05-10,Delivered,West
