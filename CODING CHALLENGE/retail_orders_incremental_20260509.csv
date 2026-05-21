@@ -1,6 +1,0 @@
-ORDER_ID,CUSTOMER_ID,CUSTOMER_NAME,PRODUCT_ID,PRODUCT_NAME,CATEGORY,QUANTITY,UNIT_PRICE,TOTAL_AMOUNT,ORDER_DATE,STATUS,REGION
-1021,C020,Tina White,P115,Cable Organizer,Stationery,5,7.99,39.95,2026-05-09,Delivered,East
-1022,C021,Uma Patel,P111,Webcam HD,Electronics,2,79.99,159.98,2026-05-09,Shipped,West
-1023,C022,Victor Lee,P108,Monitor Stand,Electronics,1,89.99,89.99,2026-05-09,Delivered,North
-1024,C023,Wendy Scott,P116,Mesh Organizer,Stationery,3,12.99,38.97,2026-05-09,Delivered,South
-1025,C024,Xander King,P101,Wireless Mouse,Electronics,2,29.99,59.98,2026-05-09,Delivered,East
