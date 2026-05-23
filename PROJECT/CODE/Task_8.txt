@@ -1,0 +1,56 @@
+USE WAREHOUSE HEALTHCARE_WH;
+USE DATABASE HEALTHCARE_DB;
+USE SCHEMA APPOINTMENT_SCHEMA;
+
+CREATE OR REPLACE PROCEDURE TRANSFORM_APPOINTMENTS()
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.11'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'run'
+AS
+$$
+def run(session):
+    session.sql("TRUNCATE TABLE APPOINTMENT_FINAL").collect()
+
+    raw_df = session.table("APPOINTMENT_RAW")
+
+    from snowflake.snowpark.functions import col, to_date, datediff, when, lit, try_cast
+    from snowflake.snowpark.types import IntegerType
+
+    transformed_df = raw_df.select(
+        col("PATIENTID").alias("PATIENT_ID"),
+        col("APPOINTMENTID").alias("APPOINTMENT_ID"),
+        col("GENDER"),
+        try_cast(col("AGE"), IntegerType()).alias("AGE"),
+        when(try_cast(col("AGE"), IntegerType()) < 13, lit("Child"))
+        .when(try_cast(col("AGE"), IntegerType()) < 18, lit("Teen"))
+        .when(try_cast(col("AGE"), IntegerType()) < 30, lit("Young Adult"))
+        .when(try_cast(col("AGE"), IntegerType()) < 50, lit("Adult"))
+        .when(try_cast(col("AGE"), IntegerType()) < 65, lit("Middle Age"))
+        .otherwise(lit("Senior")).alias("AGE_GROUP"),
+        to_date(col("SCHEDULEDDAY")).alias("SCHEDULED_DATE"),
+        to_date(col("APPOINTMENTDAY")).alias("APPOINTMENT_DATE"),
+        datediff("day", to_date(col("SCHEDULEDDAY")), to_date(col("APPOINTMENTDAY"))).alias("WAITING_DAYS"),
+        col("NEIGHBOURHOOD"),
+        try_cast(col("SCHOLARSHIP"), IntegerType()).alias("SCHOLARSHIP"),
+        try_cast(col("HIPERTENSION"), IntegerType()).alias("HYPERTENSION"),
+        try_cast(col("DIABETES"), IntegerType()).alias("DIABETES"),
+        try_cast(col("ALCOHOLISM"), IntegerType()).alias("ALCOHOLISM"),
+        try_cast(col("HANDCAP"), IntegerType()).alias("HANDICAP"),
+        try_cast(col("SMS_RECEIVED"), IntegerType()).alias("SMS_RECEIVED"),
+        col("NO_SHOW").alias("NO_SHOW_STATUS"),
+        when(col("NO_SHOW") == lit("No"), lit("Attended"))
+        .otherwise(lit("No-Show")).alias("ATTENDANCE_STATUS")
+    )
+
+    transformed_df.write.mode("append").save_as_table("APPOINTMENT_FINAL")
+
+    count = session.table("APPOINTMENT_FINAL").count()
+    return f"Transform complete. {count} rows loaded into APPOINTMENT_FINAL."
+$$;
+
+CALL TRANSFORM_APPOINTMENTS();
+
+SELECT COUNT(*) FROM APPOINTMENT_FINAL;
+SELECT * FROM APPOINTMENT_FINAL LIMIT 10;
